@@ -14,6 +14,9 @@ class AppInfo(
 
     val applicationInfo: ApplicationInfo? get() = HPackages.getApplicationInfoOrNull(packageName)
     val name get() = applicationInfo?.loadLabel(app.packageManager) ?: packageName
+    val isSystemApp get() = applicationInfo?.let {
+        it.flags and ApplicationInfo.FLAG_SYSTEM == ApplicationInfo.FLAG_SYSTEM
+    } ?: false
     val state
         get() = when {
             applicationInfo == null -> State.NOT_FOUND

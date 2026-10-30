@@ -51,7 +51,18 @@
     <string name="msg_remove_owner">如果「雹」作為装置擁有者被移除，則在「雹」移除後重新組織應用程式可能會遇到困難。
 \n已凍結的應用程式在移除後仍會保持凍結，請確保您已將重要的應用程式解凍。</string>
     <string name="tap_to_select">輕觸多選</string>
+    <string name="action_invert">反選</string>
+    <string name="action_confirm">確認</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_edit">編輯</string>
     <string name="filter_by">篩選</string>
+    <string name="group_apps">應用分組</string>
+    <string name="group_user_apps">使用者應用</string>
+    <string name="group_system_apps">系統應用</string>
+    <string name="layout_grid">網格</string>
+    <string name="layout_list">列表</string>
+    <string name="grid_columns">網格列數</string>
+    <string name="action_more">更多</string>
     <string name="filter_user_apps">使用者</string>
     <string name="filter_system_apps">系統</string>
     <string name="filter_frozen_apps">已凍結</string>
@@ -149,6 +160,13 @@
     <string name="theme_dark">深色模式</string>
     <string name="xposed_description">允許受範圍限制的應用程式啟動已暫停的應用程式</string>
     <string name="working_mode_tag">相關應用程式的工作模式</string>
+    <string name="working_mode_shizuku">Shizuku</string>
+    <string name="working_mode_root">Root</string>
+    <string name="working_mode_owner">裝置擁有者</string>
+    <string name="working_mode_dhizuku">Dhizuku</string>
+    <string name="working_mode_island">Island/Insular</string>
+    <string name="working_mode_privapp">系統應用程式</string>
+    <string name="working_mode_jailbreak">越獄</string>
     <string name="state_running">執行中</string>
     <string name="state_disabled">已停用</string>
     <string name="state_hidden">已隱藏</string>

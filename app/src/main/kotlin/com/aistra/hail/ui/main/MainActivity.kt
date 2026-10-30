@@ -26,10 +26,14 @@ import com.aistra.hail.utils.HUI
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigationrail.NavigationRailView
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     lateinit var fab: ExtendedFloatingActionButton
     lateinit var appbar: AppBarLayout
+    var bottomNavBar: BottomNavigationView? = null
+    var navRailView: NavigationRailView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +74,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         val navController = navHostFragment.navController
         navController.addOnDestinationChangedListener(this@MainActivity)
         val appBarConfiguration = AppBarConfiguration.Builder(
-            R.id.nav_home, R.id.nav_apps, R.id.nav_settings, R.id.nav_about
+            R.id.nav_home, R.id.nav_apps, R.id.nav_settings
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
         bottomNav?.setupWithNavController(navController)
@@ -83,6 +87,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
         bottomNav?.applyDefaultInsetter { paddingRelative(isRtl, start = true, end = true, bottom = true) }
         navRail?.applyDefaultInsetter { paddingRelative(isRtl, start = true, top = true, bottom = true) }
+        bottomNavBar = bottomNav
+        navRailView = navRail
         fab.applyDefaultInsetter { marginRelative(isRtl, end = true, bottom = isLandscape) }
     }
 
@@ -109,5 +115,15 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     ) {
         fab.tag = destination.id == R.id.nav_home
         if (fab.tag == true) fab.show() else fab.hide()
+        deselectNavItems(destination)
+    }
+
+    private fun deselectNavItems(destination: NavDestination) {
+        listOfNotNull(bottomNavBar, navRailView).forEach { bar ->
+            bar.menu.apply {
+                setGroupCheckable(0, true, true)
+                for (i in 0 until size()) getItem(i).isChecked = getItem(i).itemId == destination.id
+            }
+        }
     }
 }

@@ -6,3 +6,4 @@
 *.iml
 *.jks
 *.keystore
+/graphify-out/

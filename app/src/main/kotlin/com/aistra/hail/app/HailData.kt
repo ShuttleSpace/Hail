@@ -99,6 +99,16 @@ object HailData {
     const val GRAYSCALE_ICON = "grayscale_icon"
     const val COMPACT_ICON = "compact_icon"
     const val SYNTHESIZE_ADAPTIVE_ICONS = "synthesize_adaptive_icons"
+    const val GROUP_APPS = "group_apps"
+    const val HOME_LAYOUT = "home_layout"
+    const val APPS_LAYOUT = "apps_layout"
+    const val LAYOUT_GRID = "grid"
+    const val LAYOUT_LIST = "list"
+    const val GRID_COLUMNS = "grid_columns"
+    const val GROUP_MODE = "group_mode"
+    const val GROUP_USER_SYSTEM = 0
+    const val GROUP_LETTER_PINYIN = 1
+    const val GROUP_LETTER_FIRST_CHAR = 2
     const val HOME_FONT_SIZE = "home_font_size_f"
     const val FUZZY_SEARCH = "fuzzy_search"
     const val NINE_KEY_SEARCH = "nine_key"
@@ -146,6 +156,22 @@ object HailData {
     val grayscaleIcon get() = sp.getBoolean(GRAYSCALE_ICON, true)
     val compactIcon get() = sp.getBoolean(COMPACT_ICON, false)
     val synthesizeAdaptiveIcons get() = sp.getBoolean(SYNTHESIZE_ADAPTIVE_ICONS, false)
+    var groupApps
+        get() = sp.getBoolean(GROUP_APPS, true)
+        set(value) = sp.edit { putBoolean(GROUP_APPS, value) }
+    var homeLayout
+        get() = sp.getString(HOME_LAYOUT, LAYOUT_GRID)!!
+        set(value) = sp.edit { putString(HOME_LAYOUT, value) }
+    var appsLayout
+        get() = sp.getString(APPS_LAYOUT, LAYOUT_LIST)!!
+        set(value) = sp.edit { putString(APPS_LAYOUT, value) }
+    var gridColumns
+        get() = if (sp.contains(GRID_COLUMNS)) sp.getInt(GRID_COLUMNS, 4).coerceIn(1, 5)
+        else (if (compactIcon) 5 else 4).coerceIn(1, 5)
+        set(value) = sp.edit { putInt(GRID_COLUMNS, value.coerceIn(1, 5)) }
+    var groupMode
+        get() = sp.getInt(GROUP_MODE, GROUP_USER_SYSTEM)
+        set(value) = sp.edit { putInt(GROUP_MODE, value) }
     val homeFontSize get() = sp.getFloat(HOME_FONT_SIZE, 14f)
     val fuzzySearch get() = sp.getBoolean(FUZZY_SEARCH, false)
     val nineKeySearch get() = sp.getBoolean(NINE_KEY_SEARCH, false)

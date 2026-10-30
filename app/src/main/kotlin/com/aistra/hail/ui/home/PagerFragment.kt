@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
@@ -39,6 +40,8 @@ import com.aistra.hail.app.HailData
 import com.aistra.hail.databinding.DialogInputBinding
 import com.aistra.hail.databinding.FragmentPagerBinding
 import com.aistra.hail.extensions.*
+import com.aistra.hail.ui.common.MenuBottomSheet
+import com.aistra.hail.ui.common.SheetEntry
 import com.aistra.hail.ui.main.MainFragment
 import com.aistra.hail.ui.theme.AppTheme
 import com.aistra.hail.utils.*
@@ -79,11 +82,6 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
             onItemLongClickListener = this@PagerFragment
         }
         binding.recyclerView.run {
-            layoutManager = GridLayoutManager(
-                activity, resources.getInteger(
-                    if (HailData.compactIcon) R.integer.home_span_compact else R.integer.home_span
-                )
-            )
             adapter = pagerAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -98,8 +96,8 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                 }
             })
             applyDefaultInsetter { paddingRelative(isRtl, bottom = isLandscape) }
-
         }
+        applyLayoutMode()
 
         binding.refresh.apply {
             setOnRefreshListener {
@@ -113,6 +111,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
 
     override fun onResume() {
         super.onResume()
+        applyLayoutMode()
         updateCurrentList()
         updateBarTitle()
         activity.appbar.setLiftOnScrollTargetView(binding.recyclerView)
@@ -123,12 +122,27 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
             }
         }
         activity.fab.setOnClickListener {
-            setListFrozen(true, pagerAdapter.currentList.filterNot { it.whitelisted })
+            if (selectedList.isNotEmpty()) setListFrozen(true, selectedList, false)
+            else setListFrozen(true, pagerAdapter.apps.filterNot { it.whitelisted })
         }
         activity.fab.setOnLongClickListener {
             setListFrozen(true)
             true
         }
+    }
+
+    private fun applyLayoutMode() {
+        val span = if (HailData.homeLayout == HailData.LAYOUT_LIST) 1
+        else HailData.gridColumns
+        val current = binding.recyclerView.layoutManager as? GridLayoutManager
+        if (current?.spanCount == span) return
+        val layoutManager = GridLayoutManager(activity, span)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int =
+                if (pagerAdapter.isHeader(position)) span else 1
+        }
+        binding.recyclerView.layoutManager = layoutManager
+        pagerAdapter.notifyDataSetChanged()
     }
 
     private fun updateCurrentList() = HailData.checkedList.filter {
@@ -138,10 +152,78 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         )) || FuzzySearch.search(it.packageName, query) || FuzzySearch.search(
             it.name.toString(), query
         ) || PinyinSearch.searchPinyinAll(it.name.toString(), query))
-    }.sortedWith(NameComparator).let {
-        binding.empty.isVisible = it.isEmpty()
-        pagerAdapter.submitList(it)
+    }.sortedWith(NameComparator).let { apps ->
+        val items = buildItems(apps)
+        binding.empty.isVisible = apps.isEmpty()
+        pagerAdapter.submitList(items)
+        updateIndexBar(items)
         app.setAutoFreezeService()
+    }
+
+    private fun buildItems(apps: List<AppInfo>): List<HomeListItem> {
+        if (!HailData.groupApps) return apps.map { HomeListItem.App(it) }
+        return when (HailData.groupMode) {
+            HailData.GROUP_LETTER_PINYIN -> buildLetterGroups(apps, ::firstLetter)
+            HailData.GROUP_LETTER_FIRST_CHAR -> buildLetterGroups(apps, ::firstChar)
+            else -> buildUserSystemGroups(apps)
+        }
+    }
+
+    private fun buildUserSystemGroups(apps: List<AppInfo>): List<HomeListItem> {
+        val userApps = apps.filterNot { it.isSystemApp }
+        val systemApps = apps.filter { it.isSystemApp }
+        return buildList {
+            if (userApps.isNotEmpty()) {
+                add(HomeListItem.Header(getString(R.string.group_user_apps)))
+                userApps.forEach { add(HomeListItem.App(it)) }
+            }
+            if (systemApps.isNotEmpty()) {
+                add(HomeListItem.Header(getString(R.string.group_system_apps)))
+                systemApps.forEach { add(HomeListItem.App(it)) }
+            }
+        }
+    }
+
+    private fun buildLetterGroups(apps: List<AppInfo>, letterOf: (AppInfo) -> Char): List<HomeListItem> {
+        val groups = linkedMapOf<Char, MutableList<AppInfo>>()
+        apps.forEach { info ->
+            val letter = letterOf(info)
+            groups.getOrPut(letter) { mutableListOf() }.add(info)
+        }
+        val sorted = groups.entries.sortedWith(
+            compareBy({ it.key == '#' }, { it.key })
+        )
+        return buildList {
+            sorted.forEach { (letter, groupApps) ->
+                add(HomeListItem.Header(letter.toString()))
+                groupApps.forEach { add(HomeListItem.App(it)) }
+            }
+        }
+    }
+
+    private fun firstLetter(info: AppInfo) = AppNameIndex.firstLetter(info.name)
+    private fun firstChar(info: AppInfo) = AppNameIndex.firstChar(info.name)
+
+    private fun updateIndexBar(items: List<HomeListItem>) {
+        if (query.isNotEmpty()) {
+            binding.indexBar.isVisible = false
+            return
+        }
+        val positions = linkedMapOf<Char, Int>()
+        items.forEachIndexed { index, item ->
+            if (item is HomeListItem.App) {
+                positions.putIfAbsent(AppNameIndex.firstLetter(item.info.name), index)
+            }
+        }
+        val letters = positions.keys.sortedWith(compareBy({ it == '#' }, { it }))
+        binding.indexBar.isVisible = letters.size > 1
+        binding.indexBar.setLetters(letters)
+        binding.indexBar.setOnLetterSelectedListener { letter ->
+            positions[letter]?.let { position ->
+                (binding.recyclerView.layoutManager as? GridLayoutManager)
+                    ?.scrollToPositionWithOffset(position, 0)
+            }
+        }
     }
 
     private fun updateBarTitle() {
@@ -337,7 +419,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         }.setNegativeButton(R.string.action_deselect) { _, _ ->
             deselect()
         }.setNeutralButton(R.string.action_select_all) { _, _ ->
-            selectedList.addAll(pagerAdapter.currentList.filterNot { it in selectedList })
+            selectedList.addAll(pagerAdapter.apps.filterNot { it in selectedList })
             updateCurrentList()
             updateBarTitle()
             onMultiSelect()
@@ -473,7 +555,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                     val oldTagId = HailData.tags[position].second
                     HailData.tags[position] = tagName to if (defaultTab) 0 else tagId
                     if (!defaultTab) {
-                        pagerAdapter.currentList.forEach {
+                        pagerAdapter.apps.forEach {
                             val index = it.tagIdList.indexOf(oldTagId)
                             if (index != -1) it.tagIdList[index] = tagId
                         }
@@ -487,7 +569,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                 if (list != null || position == 0) return@apply
                 setNeutralButton(R.string.action_tag_remove) { _, _ ->
                     val tagIdToRemove = HailData.tags[position].second
-                    pagerAdapter.currentList.forEach {
+                    pagerAdapter.apps.forEach {
                         if (it.tagIdList.remove(tagIdToRemove) && it.tagIdList.isEmpty()) {
                             removeCheckedApp(it.packageName, false)
                         }
@@ -553,36 +635,133 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         )
     )
 
+    private fun showHomeSheet() {
+        MenuBottomSheet(requireContext()) {
+            buildList {
+                add(
+                    SheetEntry.Action(R.drawable.ic_round_frozen, R.string.action_freeze_current) {
+                        setListFrozen(true, pagerAdapter.apps.filterNot { it.whitelisted })
+                        true
+                    })
+                add(
+                    SheetEntry.Action(R.drawable.ic_round_unfrozen, R.string.action_unfreeze_current) {
+                        setListFrozen(false, pagerAdapter.apps)
+                        true
+                    })
+                add(SheetEntry.Divider)
+                add(
+                    SheetEntry.Action(R.drawable.ic_round_frozen, R.string.action_freeze_all) {
+                        setListFrozen(true)
+                        true
+                    })
+                add(
+                    SheetEntry.Action(R.drawable.ic_round_unfrozen, R.string.action_unfreeze_all) {
+                        setListFrozen(false)
+                        true
+                    })
+                add(
+                    SheetEntry.Action(R.drawable.ic_round_frozen, R.string.action_freeze_non_whitelisted) {
+                        setListFrozen(true, HailData.checkedList.filterNot { it.whitelisted })
+                        true
+                    })
+                add(SheetEntry.Divider)
+                add(
+                    SheetEntry.Action(R.drawable.ic_content_paste, R.string.action_import_clipboard) {
+                        importFromClipboard()
+                        true
+                    })
+                add(
+                    SheetEntry.Action(R.drawable.ic_round_frozen, R.string.action_import_frozen) {
+                        lifecycleScope.launch {
+                            val size = importFrozenApp()
+                            if (size > 0) {
+                                HailData.saveApps()
+                                updateCurrentList()
+                            }
+                            HUI.showToast(getString(R.string.msg_imported, size.toString()))
+                        }
+                        true
+                    })
+                add(
+                    SheetEntry.Action(R.drawable.ic_content_copy, R.string.action_export_current) {
+                        exportToClipboard(pagerAdapter.apps)
+                        true
+                    })
+                add(
+                    SheetEntry.Action(R.drawable.ic_content_copy, R.string.action_export_all) {
+                        exportToClipboard(HailData.checkedList)
+                        true
+                    })
+                add(SheetEntry.Divider)
+                add(
+                    SheetEntry.Action(
+                        R.drawable.ic_view_grid, R.string.layout_grid,
+                        HailData.homeLayout == HailData.LAYOUT_GRID
+                    ) {
+                        HailData.homeLayout = HailData.LAYOUT_GRID
+                        applyLayoutMode()
+                        false
+                    })
+                add(
+                    SheetEntry.Action(
+                        R.drawable.ic_view_list, R.string.layout_list,
+                        HailData.homeLayout == HailData.LAYOUT_LIST
+                    ) {
+                        HailData.homeLayout = HailData.LAYOUT_LIST
+                        applyLayoutMode()
+                        false
+                    })
+                add(
+                    SheetEntry.Stepper(
+                        R.drawable.ic_view_grid, R.string.grid_columns,
+                        HailData.gridColumns, 1..5
+                    ) {
+                        HailData.gridColumns = it
+                        applyLayoutMode()
+                    })
+                add(SheetEntry.Divider)
+                add(
+                    SheetEntry.Action(R.drawable.ic_group, R.string.group_apps, HailData.groupApps) {
+                        HailData.groupApps = !HailData.groupApps
+                        updateCurrentList()
+                        false
+                    })
+            }
+        }.show()
+    }
+
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_multiselect -> {
                 multiselect = !multiselect
-                item.updateIcon()
+                pagerAdapter.multiselectMode = multiselect
                 if (multiselect) {
                     updateBarTitle()
                     HUI.showToast(R.string.tap_to_select)
-                } else deselect()
-            }
-
-            R.id.action_freeze_current -> setListFrozen(true, pagerAdapter.currentList.filterNot { it.whitelisted })
-
-            R.id.action_unfreeze_current -> setListFrozen(false, pagerAdapter.currentList)
-            R.id.action_freeze_all -> setListFrozen(true)
-            R.id.action_unfreeze_all -> setListFrozen(false)
-            R.id.action_freeze_non_whitelisted -> setListFrozen(true, HailData.checkedList.filterNot { it.whitelisted })
-
-            R.id.action_import_clipboard -> importFromClipboard()
-            R.id.action_import_frozen -> lifecycleScope.launch {
-                val size = importFrozenApp()
-                if (size > 0) {
-                    HailData.saveApps()
-                    updateCurrentList()
+                } else {
+                    updateBarTitle()
                 }
-                HUI.showToast(getString(R.string.msg_imported, size.toString()))
+                pagerAdapter.notifyDataSetChanged()
+                activity.invalidateMenu()
             }
 
-            R.id.action_export_current -> exportToClipboard(pagerAdapter.currentList)
-            R.id.action_export_all -> exportToClipboard(HailData.checkedList)
+            R.id.action_invert -> {
+                val apps = pagerAdapter.apps
+                apps.forEach { info ->
+                    if (info in selectedList) selectedList.remove(info) else selectedList.add(info)
+                }
+                pagerAdapter.notifyDataSetChanged()
+                updateBarTitle()
+            }
+
+            R.id.action_cancel -> {
+                multiselect = false
+                pagerAdapter.multiselectMode = false
+                deselect()
+                activity.invalidateMenu()
+            }
+
+            R.id.action_more -> showHomeSheet()
         }
         return false
     }
@@ -590,6 +769,25 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_home, menu)
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        val searchItem = menu.findItem(R.id.action_search)
+        val multiselectItem = menu.findItem(R.id.action_multiselect)
+        val invertItem = menu.findItem(R.id.action_invert)
+        val cancelItem = menu.findItem(R.id.action_cancel)
+        val moreItem = menu.findItem(R.id.action_more)
+        if (multiselect) {
+            searchItem.isVisible = false
+            moreItem.isVisible = false
+            invertItem.isVisible = true
+            cancelItem.isVisible = true
+            multiselectItem.isEnabled = true
+            multiselectItem.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_check)
+        } else {
+            searchItem.isVisible = true
+            moreItem.isVisible = true
+            invertItem.isVisible = false
+            cancelItem.isVisible = false
+            multiselectItem.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_outline_select_all)
+        }
         if (HailData.nineKeySearch) {
             val editText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
             editText.inputType = InputType.TYPE_CLASS_PHONE
@@ -609,7 +807,6 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
 
             override fun onQueryTextSubmit(query: String): Boolean = true
         })
-        menu.findItem(R.id.action_multiselect).updateIcon()
     }
 
     override fun onDestroyView() {

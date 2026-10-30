@@ -52,7 +52,18 @@
     <string name="msg_remove_owner">将移除雹的设备所有者，移除后便无法冻结与解冻应用。
 \n已冻结的应用在移除设备所有者后仍会保持冻结状态，请确保您已将重要的应用解冻。</string>
     <string name="tap_to_select">点按多选</string>
+    <string name="action_invert">反选</string>
+    <string name="action_confirm">确认</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_edit">编辑</string>
     <string name="filter_by">筛选</string>
+    <string name="group_apps">应用分组</string>
+    <string name="group_user_apps">用户应用</string>
+    <string name="group_system_apps">系统应用</string>
+    <string name="layout_grid">网格</string>
+    <string name="layout_list">列表</string>
+    <string name="grid_columns">网格列数</string>
+    <string name="action_more">更多</string>
     <string name="filter_user_apps">用户</string>
     <string name="filter_system_apps">系统</string>
     <string name="filter_frozen_apps">已冻结</string>
@@ -149,6 +160,13 @@
     <string name="app_theme">应用主题</string>
     <string name="follow_system">跟随系统</string>
     <string name="working_mode_tag">相关应用的工作模式</string>
+    <string name="working_mode_shizuku">Shizuku</string>
+    <string name="working_mode_root">Root</string>
+    <string name="working_mode_owner">设备所有者</string>
+    <string name="working_mode_dhizuku">Dhizuku</string>
+    <string name="working_mode_island">炼妖壶/Insular</string>
+    <string name="working_mode_privapp">系统应用</string>
+    <string name="working_mode_jailbreak">越狱</string>
     <string name="state_running">正在运行</string>
     <string name="state_disabled">已停用</string>
     <string name="state_hidden">已隐藏</string>

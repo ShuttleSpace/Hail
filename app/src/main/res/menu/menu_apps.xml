@@ -1,56 +1,35 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <item
-            android:id="@+id/action_search"
-            android:icon="@drawable/ic_outline_search"
-            android:title="@string/action_search"
-            app:actionViewClass="androidx.appcompat.widget.SearchView"
-            app:showAsAction="always|collapseActionView"
-            tools:ignore="AlwaysShowAction"/>
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_outline_search"
+        android:title="@string/action_search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView"
+        tools:ignore="AlwaysShowAction" />
     <item
-            android:icon="@drawable/ic_outline_filter"
-            android:title="@string/filter_by"
-            app:showAsAction="ifRoom">
-        <menu>
-            <group
-                    android:id="@+id/group_filter_apps"
-                    android:checkableBehavior="single">
-                <item
-                        android:id="@+id/filter_user_apps"
-                        android:title="@string/filter_user_apps"/>
-                <item
-                        android:id="@+id/filter_system_apps"
-                        android:title="@string/filter_system_apps"/>
-            </group>
-            <group
-                    android:id="@+id/group_filter_frozen"
-                    android:checkableBehavior="all">
-                <item
-                        android:id="@+id/filter_frozen_apps"
-                        android:title="@string/filter_frozen_apps"/>
-                <item
-                        android:id="@+id/filter_unfrozen_apps"
-                        android:title="@string/filter_unfrozen_apps"/>
-            </group>
-        </menu>
-    </item>
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_outline_select_all"
+        android:title="@string/action_edit"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
     <item
-            android:icon="@drawable/ic_outline_sort"
-            android:title="@string/sort_by"
-            app:showAsAction="ifRoom">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                        android:id="@+id/sort_by_name"
-                        android:title="@string/sort_name"/>
-                <item
-                        android:id="@+id/sort_by_install"
-                        android:title="@string/sort_install"/>
-                <item
-                        android:id="@+id/sort_by_update"
-                        android:title="@string/sort_update"/>
-            </group>
-        </menu>
-    </item>
+        android:id="@+id/action_invert"
+        android:icon="@drawable/ic_outline_swap"
+        android:title="@string/action_invert"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+    <item
+        android:id="@+id/action_cancel"
+        android:icon="@drawable/ic_outline_close"
+        android:title="@string/action_cancel"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_vert"
+        android:title="@string/action_more"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
 </menu>
