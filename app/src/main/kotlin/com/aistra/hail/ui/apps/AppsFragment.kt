@@ -398,6 +398,37 @@ class AppsFragment : MainFragment(), AppsAdapter.OnItemClickListener, AppsAdapte
                         refreshDisplay()
                         false
                     })
+                add(SheetEntry.Header(R.string.group_mode))
+                add(
+                    SheetEntry.Action(
+                        R.drawable.ic_group, R.string.group_user_system,
+                        checked = HailData.groupMode == HailData.GROUP_USER_SYSTEM, radio = true
+                    ) {
+                        HailData.groupMode = HailData.GROUP_USER_SYSTEM
+                        HailData.groupApps = true
+                        refreshDisplay()
+                        false
+                    })
+                add(
+                    SheetEntry.Action(
+                        R.drawable.ic_group, R.string.group_letter_pinyin,
+                        checked = HailData.groupMode == HailData.GROUP_LETTER_PINYIN, radio = true
+                    ) {
+                        HailData.groupMode = HailData.GROUP_LETTER_PINYIN
+                        HailData.groupApps = true
+                        refreshDisplay()
+                        false
+                    })
+                add(
+                    SheetEntry.Action(
+                        R.drawable.ic_group, R.string.group_letter_first_char,
+                        checked = HailData.groupMode == HailData.GROUP_LETTER_FIRST_CHAR, radio = true
+                    ) {
+                        HailData.groupMode = HailData.GROUP_LETTER_FIRST_CHAR
+                        HailData.groupApps = true
+                        refreshDisplay()
+                        false
+                    })
             }
         }.show()
     }

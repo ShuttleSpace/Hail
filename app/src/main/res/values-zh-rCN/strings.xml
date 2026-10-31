@@ -43,6 +43,10 @@
     <string name="msg_uninstall">要卸载此应用吗？</string>
     <string name="working_mode">工作模式</string>
     <string name="mode_default">空闲</string>
+    <string name="mode_action_stop">强行停止</string>
+    <string name="mode_action_disable">停用</string>
+    <string name="mode_action_hide">隐藏</string>
+    <string name="mode_action_suspend">暂停</string>
     <string name="mode_owner_hide">设备所有者 - 隐藏</string>
     <string name="mode_su_disable">Root - 停用</string>
     <string name="mode_shizuku_disable">Shizuku - 停用</string>
@@ -60,6 +64,10 @@
     <string name="group_apps">应用分组</string>
     <string name="group_user_apps">用户应用</string>
     <string name="group_system_apps">系统应用</string>
+    <string name="group_user_system">用户 / 系统</string>
+    <string name="group_letter_pinyin">拼音首字母</string>
+    <string name="group_letter_first_char">首字</string>
+    <string name="group_mode">分组方式</string>
     <string name="layout_grid">网格</string>
     <string name="layout_list">列表</string>
     <string name="grid_columns">网格列数</string>

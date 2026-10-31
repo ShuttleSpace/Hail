@@ -116,28 +116,34 @@ class AppsAdapter : ListAdapter<AppsListItem, RecyclerView.ViewHolder>(DIFF) {
             updating = true
             this.info = info
             val frozen = AppManager.isAppFrozen(pkg)
+            val checked = HailData.isChecked(pkg)
+            val muted = checked || frozen
 
             icon.apply {
                 loadIconJob = AppIconCache.loadIconBitmapAsync(
-                    context, info, HPackages.myUserId, this, HailData.grayscaleIcon && frozen
+                    context, info, HPackages.myUserId, this, muted
                 )
             }
             name.apply {
                 val label = info.loadLabel(context.packageManager)
                 text = if (!HailData.grayscaleIcon && frozen) "❄️$label" else label
-                isEnabled = !HailData.grayscaleIcon || !frozen
-                if (HPackages.isAppUninstalled(pkg)) setTextColor(
-                    MaterialColors.getColor(
-                        this, androidx.appcompat.R.attr.colorError
-                    )
+                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium)
+                val onSurface = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface)
+                setTextColor(
+                    when {
+                        HPackages.isAppUninstalled(pkg) -> MaterialColors.getColor(
+                            this, androidx.appcompat.R.attr.colorError
+                        )
+
+                        muted -> androidx.core.graphics.ColorUtils.setAlphaComponent(onSurface, 0x66)
+                        else -> onSurface
+                    }
                 )
-                else setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium)
             }
             desc?.apply {
                 text = pkg
-                isEnabled = editMode || !HailData.grayscaleIcon || !frozen
+                isEnabled = editMode || !muted
             }
-            val checked = HailData.isChecked(pkg)
             star.visibility = if (editMode || checked) View.VISIBLE else View.GONE
             star.isEnabled = editMode
             star.isChecked = checked

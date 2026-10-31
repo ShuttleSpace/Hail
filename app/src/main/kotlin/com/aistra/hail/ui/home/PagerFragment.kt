@@ -726,6 +726,37 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                         updateCurrentList()
                         false
                     })
+                add(SheetEntry.Header(R.string.group_mode))
+                add(
+                    SheetEntry.Action(
+                        R.drawable.ic_group, R.string.group_user_system,
+                        checked = HailData.groupMode == HailData.GROUP_USER_SYSTEM, radio = true
+                    ) {
+                        HailData.groupMode = HailData.GROUP_USER_SYSTEM
+                        HailData.groupApps = true
+                        updateCurrentList()
+                        false
+                    })
+                add(
+                    SheetEntry.Action(
+                        R.drawable.ic_group, R.string.group_letter_pinyin,
+                        checked = HailData.groupMode == HailData.GROUP_LETTER_PINYIN, radio = true
+                    ) {
+                        HailData.groupMode = HailData.GROUP_LETTER_PINYIN
+                        HailData.groupApps = true
+                        updateCurrentList()
+                        false
+                    })
+                add(
+                    SheetEntry.Action(
+                        R.drawable.ic_group, R.string.group_letter_first_char,
+                        checked = HailData.groupMode == HailData.GROUP_LETTER_FIRST_CHAR, radio = true
+                    ) {
+                        HailData.groupMode = HailData.GROUP_LETTER_FIRST_CHAR
+                        HailData.groupApps = true
+                        updateCurrentList()
+                        false
+                    })
             }
         }.show()
     }

@@ -85,19 +85,24 @@ class PagerAdapter(
                 if (info.whitelisted) append("\uD83D\uDD12")
                 append(info.name)
             }
-            isEnabled = !HailData.grayscaleIcon || info.state != AppInfo.State.FROZEN
+            setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, HailData.homeFontSize)
+            val onSurface = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface)
             when {
-                info in selectedList -> setTextColor(
-                    MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary)
-                )
-
                 info.state == AppInfo.State.NOT_FOUND -> setTextColor(
                     MaterialColors.getColor(this, androidx.appcompat.R.attr.colorError)
                 )
 
-                else -> setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium)
+                info.state == AppInfo.State.FROZEN -> setTextColor(
+                    androidx.core.graphics.ColorUtils.setAlphaComponent(onSurface, 0x66)
+                )
+
+                info in selectedList -> setTextColor(
+                    MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary)
+                )
+
+                else -> setTextColor(onSurface)
             }
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, HailData.homeFontSize)
         }
     }
 

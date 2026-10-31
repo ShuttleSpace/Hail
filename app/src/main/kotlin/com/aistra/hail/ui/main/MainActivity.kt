@@ -119,10 +119,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     private fun deselectNavItems(destination: NavDestination) {
+        val selectedId = if (destination.id == R.id.nav_about) R.id.nav_settings else destination.id
         listOfNotNull(bottomNavBar, navRailView).forEach { bar ->
             bar.menu.apply {
                 setGroupCheckable(0, true, true)
-                for (i in 0 until size()) getItem(i).isChecked = getItem(i).itemId == destination.id
+                for (i in 0 until size()) getItem(i).isChecked = getItem(i).itemId == selectedId
             }
         }
     }
