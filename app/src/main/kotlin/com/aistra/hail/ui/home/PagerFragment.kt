@@ -326,8 +326,9 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                 7 -> exportToClipboard(listOf(info))
                 8 -> removeCheckedApp(pkg)
                 9 -> {
-                    setListFrozen(false, listOf(info), false)
-                    if (!AppManager.isAppFrozen(pkg)) removeCheckedApp(pkg)
+                    if (setListFrozen(false, listOf(info), false) || !AppManager.isAppFrozen(pkg)) {
+                        removeCheckedApp(pkg)
+                    }
                 }
             }
         }.setNeutralButton(R.string.action_details) { _, _ ->
@@ -408,9 +409,11 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                 }
 
                 5 -> {
-                    setListFrozen(false, selectedList, false)
+                    val unfrozen = setListFrozen(false, selectedList, false)
                     selectedList.forEach {
-                        if (!AppManager.isAppFrozen(it.packageName)) removeCheckedApp(it.packageName, false)
+                        if (unfrozen || !AppManager.isAppFrozen(it.packageName)) {
+                            removeCheckedApp(it.packageName, false)
+                        }
                     }
                     HailData.saveApps()
                     deselect()
@@ -506,28 +509,33 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
 
     private fun setListFrozen(
         frozen: Boolean, list: List<AppInfo> = HailData.checkedList, updateList: Boolean = true
-    ) {
+    ): Boolean {
         if (HailData.workingMode == HailData.MODE_DEFAULT) {
             MaterialAlertDialogBuilder(activity).setMessage(R.string.msg_guide)
                 .setPositiveButton(android.R.string.ok, null).show()
-            return
+            return false
         } else if (HailData.workingMode == HailData.MODE_SHIZUKU_HIDE) {
             runCatching { HShizuku.isRoot }.onSuccess {
                 if (!it) {
                     MaterialAlertDialogBuilder(activity).setMessage(R.string.shizuku_hide_adb)
                         .setPositiveButton(android.R.string.ok, null).show()
-                    return
+                    return false
                 }
             }
         }
         val filtered = list.filter { AppManager.isAppFrozen(it.packageName) != frozen }
-        when (val result = AppManager.setListFrozen(frozen, *filtered.toTypedArray())) {
-            null -> HUI.showToast(R.string.permission_denied)
+        return when (val result = AppManager.setListFrozen(frozen, *filtered.toTypedArray())) {
+            null -> {
+                HUI.showToast(R.string.permission_denied)
+                false
+            }
+
             else -> {
                 if (updateList) updateCurrentList()
                 HUI.showToast(
                     if (frozen) R.string.msg_freeze else R.string.msg_unfreeze, result
                 )
+                true
             }
         }
     }
