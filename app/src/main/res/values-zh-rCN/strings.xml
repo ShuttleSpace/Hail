@@ -59,6 +59,7 @@
     <string name="action_invert">反选</string>
     <string name="action_confirm">确认</string>
     <string name="action_cancel">取消</string>
+    <string name="action_back">返回</string>
     <string name="action_edit">编辑</string>
     <string name="filter_by">筛选</string>
     <string name="group_apps">应用分组</string>
@@ -112,7 +113,6 @@
     <string name="skip_while_charging">仅未充电时</string>
     <string name="skip_foreground_app">保留前台应用</string>
     <string name="title_customize">自定义</string>
-    <string name="grayscale_icon">灰度图标</string>
     <string name="compact_icon">紧凑图标</string>
     <string name="action_biometric">生物识别登录</string>
     <string name="msg_biometric">使用您的生物识别凭证登录</string>

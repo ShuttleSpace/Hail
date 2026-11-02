@@ -86,7 +86,6 @@
     <string name="skip_notifying_app">Lewati aplikasi bernotifikasi</string>
     <string name="title_shortcuts">Pintasan</string>
     <string name="action_none">Kosong</string>
-    <string name="grayscale_icon">Ikon hitam-putih</string>
     <string name="msg_biometric">Masuk dengan pemindaian biometrik</string>
     <string name="action_pin">Sematkan</string>
     <string name="action_remove_whitelist">Hapus dari daftar putih</string>

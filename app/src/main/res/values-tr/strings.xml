@@ -90,7 +90,6 @@
     <string name="skip_while_charging">Şarjdayken atla</string>
     <string name="skip_foreground_app">Çalışan uygulamaları atla</string>
     <string name="title_customize">Kişiselleştir</string>
-    <string name="grayscale_icon">Gri tonlamalı ikonlar</string>
     <string name="compact_icon">Kompakt ikon</string>
     <string name="action_biometric">Biyometrik giriş</string>
     <string name="msg_biometric">Biyometrik kimlik bilgilerinizi kullanarak giriş yapın</string>

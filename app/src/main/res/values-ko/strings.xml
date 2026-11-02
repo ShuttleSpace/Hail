@@ -113,7 +113,6 @@
     <string name="skip_while_charging">충전중 건너뛰기</string>
     <string name="skip_foreground_app">포그라운드 앱 건너뛰기</string>
     <string name="title_customize">사용자 지정</string>
-    <string name="grayscale_icon">회색 아이콘</string>
     <string name="compact_icon">맞춤형 아이콘</string>
     <string name="action_biometric">지문으로 로그인</string>
     <string name="msg_biometric">지문으로 사용하여 ­로그인</string>

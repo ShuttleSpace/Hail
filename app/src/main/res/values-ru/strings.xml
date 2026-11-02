@@ -98,7 +98,6 @@
     <string name="skip_while_charging">Не замораживать во время зарядки</string>
     <string name="skip_foreground_app">Не замораживать приложения переднего плана</string>
     <string name="title_customize">Внешний вид</string>
-    <string name="grayscale_icon">Иконки в градациях серого</string>
     <string name="compact_icon">Компактные иконки</string>
     <string name="action_biometric">Биометрический вход</string>
     <string name="msg_biometric">Вход с использованием своих биометрических данных</string>

@@ -70,7 +70,6 @@
     <string name="auto_freeze_after_lock">اسکرین لاک ہونے کے بعد</string>
     <string name="skip_while_charging">چارج کرتے وقت چھوڑ دیں</string>
     <string name="title_customize">حسب ضرورت بنائیں</string>
-    <string name="grayscale_icon">گرے اسکیل آئیکن</string>
     <string name="synthesize_adaptive_icons">انکولی شبیہیں سنتھیسائز کریں</string>
     <string name="action_export_current">موجودہ برآمد کریں</string>
     <string name="action_export_all">تمام برآمد کریں</string>

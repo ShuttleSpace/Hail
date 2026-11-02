@@ -90,6 +90,13 @@ object AppIconCache : CoroutineScope {
         return bitmap
     }
 
+    /** Loads an app icon for Compose, off the main thread. */
+    suspend fun loadIconBitmap(
+        context: Context, info: ApplicationInfo, userId: Int, size: Int
+    ): Bitmap? = withContext(dispatcher) {
+        runCatching { getOrLoadBitmap(context, info, userId, size) }.getOrNull()
+    }
+
     @JvmStatic
     fun loadIconBitmapAsync(
         context: Context,

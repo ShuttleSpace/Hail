@@ -92,7 +92,6 @@
     <string name="skip_foreground_app">フォアグラウンドアプリをスキップ</string>
     <string name="title_customize">カスタマイズ</string>
     <string name="compact_icon">コンパクトアイコン</string>
-    <string name="grayscale_icon">グレースケールアイコン</string>
     <string name="action_biometric">生体認証ログイン</string>
     <string name="msg_biometric">生体認証情報を使用して認証する</string>
     <string name="action_pin">ピン留めする</string>

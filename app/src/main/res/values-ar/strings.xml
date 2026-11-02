@@ -64,7 +64,6 @@
     <string name="title_about">لمحة</string>
     <string name="tile_action">عمل الزر</string>
     <string name="action_export_all">تصدير الكل</string>
-    <string name="grayscale_icon">أيقونة التدرج الرمادي</string>
     <string name="action_tag_set">تحديد علامة</string>
     <string name="app_not_installed">التطبيق ليس مثبتاً</string>
     <string name="sort_by">ترتيب حسب</string>

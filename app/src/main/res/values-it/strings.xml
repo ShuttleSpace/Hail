@@ -97,7 +97,6 @@
     <string name="skip_while_charging">Passa mentre la carica</string>
     <string name="skip_foreground_app">Passa le app di primo piano</string>
     <string name="title_customize">Personalizza</string>
-    <string name="grayscale_icon">Icona in scala di grigi</string>
     <string name="compact_icon">Icona compatta</string>
     <string name="action_biometric">Accesso biometrico</string>
     <string name="msg_biometric">Log in using your biometric credential</string>

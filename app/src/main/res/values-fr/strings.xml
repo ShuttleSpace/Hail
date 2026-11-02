@@ -96,7 +96,6 @@
     <string name="action_export_current">Exporter celles sélectionnées</string>
     <string name="tile_action">Action pour Paramètres rapides</string>
     <string name="action_export_all">Tout exporter</string>
-    <string name="grayscale_icon">Icone en niveaux de gris</string>
     <string name="action_skip">Ignorer</string>
     <string name="app_not_installed">Application non installée</string>
     <string name="sort_by">Trier par</string>

@@ -58,6 +58,7 @@
     <string name="action_invert">反選</string>
     <string name="action_confirm">確認</string>
     <string name="action_cancel">取消</string>
+    <string name="action_back">返回</string>
     <string name="action_edit">編輯</string>
     <string name="filter_by">篩選</string>
     <string name="group_apps">應用分組</string>
@@ -111,7 +112,6 @@
     <string name="skip_while_charging">充電時跳過</string>
     <string name="skip_foreground_app">跳過前景應用程式</string>
     <string name="title_customize">自訂</string>
-    <string name="grayscale_icon">灰階圖示</string>
     <string name="compact_icon">精簡圖示</string>
     <string name="action_biometric">生物特徵辨識登入</string>
     <string name="msg_biometric">使用您的生物特徵辨識認證登入</string>

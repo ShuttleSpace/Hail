@@ -59,7 +59,6 @@
     <string name="title_about">Sobre</string>
     <string name="tile_action">Ação de bloco</string>
     <string name="action_export_all">Exportar tudo</string>
-    <string name="grayscale_icon">Ícone em tons de cinzento</string>
     <string name="action_skip">Pular</string>
     <string name="action_tag_set">Definir tag</string>
     <string name="app_not_installed">App não instalada</string>

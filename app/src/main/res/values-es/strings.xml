@@ -95,7 +95,6 @@
     <string name="skip_while_charging">Omitir durante la carga</string>
     <string name="skip_foreground_app">Omitir aplicaciones en primer plano</string>
     <string name="title_customize">Personalizar</string>
-    <string name="grayscale_icon">Iconos en escala de grises</string>
     <string name="compact_icon">Iconos compactos</string>
     <string name="action_biometric">Inicio de sesión biométrico</string>
     <string name="msg_biometric">Inicia sesión con tu credencial biométrica</string>

@@ -110,7 +110,6 @@
     <string name="skip_while_charging">Ohita latauksen aikana</string>
     <string name="auto_freeze_after_lock">Näytön lukitsemisen jälkeen</string>
     <string name="skip_foreground_app">Ohita etualan sovellus</string>
-    <string name="grayscale_icon">Harmaasävy-kuvake</string>
     <string name="msg_biometric">Kirjaudu sisään biometrisilla tunnistetiedoillasi</string>
     <string name="action_pin">Kiinnitä</string>
     <string name="action_unpin">Irrota</string>

@@ -72,7 +72,6 @@
     <string name="auto_freeze_after_lock">A képernyő lezárása után</string>
     <string name="skip_while_charging">Kihagyás töltés közben</string>
     <string name="skip_foreground_app">Kihagyás előtérben lévő appoknál</string>
-    <string name="grayscale_icon">Szürkeárnyalatos ikon</string>
     <string name="action_biometric">Biometrikus azonosítás</string>
     <string name="action_pin">Kitűz</string>
     <string name="action_unpin">Kitűzést töröl</string>

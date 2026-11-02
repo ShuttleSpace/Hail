@@ -3,81 +3,52 @@ package com.aistra.hail.ui.apps
 import android.app.Application
 import android.content.pm.ApplicationInfo
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.aistra.hail.HailApp
 import com.aistra.hail.app.AppManager
 import com.aistra.hail.app.HailData
 import com.aistra.hail.utils.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
-    val apps = MutableLiveData<List<ApplicationInfo>>()
-    val isRefreshing = MutableLiveData(false)
-    val query = MutableLiveData("")
-    val displayApps = MutableLiveData<List<ApplicationInfo>>()
+    private val appsFlow = MutableStateFlow<List<ApplicationInfo>>(emptyList())
+    private val queryFlow = MutableStateFlow("")
+    private val revisionFlow = MutableStateFlow(0)
+
+    /**
+     * The list the user actually sees: installed apps filtered by the frozen /
+     * user / system switches and the current search query, then sorted.
+     * */
+    val displayApps: StateFlow<List<ApplicationInfo>> =
+        combine(appsFlow, queryFlow, revisionFlow) { apps, query, _ -> apps to query }
+            .mapLatest { (apps, query) -> filterList(apps, query) }
+            .flowOn(Dispatchers.Default)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         updateAppList()
     }
 
-    private var refreshJob: Job? = null
-    private var refreshStateJob: Job? = null
-
-    /**
-     * Delaying changes to the refreshing state prevents the progress bar from flickering.
-     * */
-    private fun postRefreshState(state: Boolean, delayTime: Long = 200L) {
-        if (!state) {
-            refreshStateJob?.cancel()
-            isRefreshing.postValue(false)
-        } else if (refreshStateJob == null || refreshStateJob!!.isCompleted) {
-            refreshStateJob = viewModelScope.launch {
-                delay(delayTime)
-                isRefreshing.postValue(true)
-            }
+    fun updateAppList() {
+        viewModelScope.launch {
+            appsFlow.value = withContext(Dispatchers.IO) { HPackages.getInstalledApplications() }
         }
     }
 
     fun postQuery(text: String, delayTime: Long = 300L) {
-        refreshJob?.cancel()
-        if (delayTime == 0L)
-            query.postValue(text)
-        else {
-            refreshJob = viewModelScope.launch {
-                delay(delayTime)
-                query.postValue(text)
-            }
-        }
-    }
-
-    /**
-     * This method is only used to refresh all the applications that the user has installed
-     * and has no filtering or sorting effect.
-     * */
-    fun updateAppList() {
         viewModelScope.launch {
-            postRefreshState(true)
-            apps.postValue(HPackages.getInstalledApplications())
+            if (delayTime > 0) kotlinx.coroutines.delay(delayTime)
+            queryFlow.value = text
         }
     }
 
-    /**
-     * The list that the user actually sees.
-     *
-     * This method is different from `updateAppList()` in that it filters and rearranges the data
-     * from `apps` and places it in `displayApps`.
-     * */
+    /** Re-applies the sort/filter switches after they changed. */
     fun updateDisplayAppList() {
-        apps.value?.let {
-            viewModelScope.launch {
-                postRefreshState(true)
-                displayApps.postValue(filterList(it, query.value))
-                postRefreshState(false)
-            }
-        }
+        revisionFlow.value++
     }
-
 
     private val ApplicationInfo.isSystemApp: Boolean
         get() = flags and ApplicationInfo.FLAG_SYSTEM == ApplicationInfo.FLAG_SYSTEM
@@ -87,9 +58,9 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
         appList: List<ApplicationInfo>,
         query: String?
     ): List<ApplicationInfo> {
-        val pm = getApplication<HailApp>().packageManager
+        val pm = (getApplication() as HailApp).packageManager
         return withContext(Dispatchers.Default) {
-            return@withContext appList.filter {
+            appList.filter {
                 ((HailData.filterUserApps && !it.isSystemApp)
                         || (HailData.filterSystemApps && it.isSystemApp))
 

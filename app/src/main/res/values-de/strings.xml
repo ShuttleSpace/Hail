@@ -99,7 +99,6 @@
     <string name="skip_while_charging">Überspringen beim Laden</string>
     <string name="skip_foreground_app">Anwendung im Vordergrund überspringen</string>
     <string name="title_customize">Anpassen</string>
-    <string name="grayscale_icon">Graustufen-Symbol</string>
     <string name="compact_icon">Kompaktes Symbol</string>
     <string name="action_biometric">Biometrische Anmeldung</string>
     <string name="msg_biometric">Mit biometrischer Prüfung anmelden</string>

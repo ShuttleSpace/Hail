@@ -1,5 +1,8 @@
 package com.aistra.hail.app
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.aistra.hail.BuildConfig
@@ -96,7 +99,6 @@ object HailData {
     const val THEME_DARK = "theme_dark"
     val APP_THEME_VALUES = listOf(FOLLOW_SYSTEM, THEME_LIGHT, THEME_DARK)
     const val ICON_PACK = "icon_pack"
-    const val GRAYSCALE_ICON = "grayscale_icon"
     const val COMPACT_ICON = "compact_icon"
     const val SYNTHESIZE_ADAPTIVE_ICONS = "synthesize_adaptive_icons"
     const val GROUP_APPS = "group_apps"
@@ -144,6 +146,11 @@ object HailData {
     )
 
     private val sp = PreferenceManager.getDefaultSharedPreferences(app)
+
+    /** SharedPreferences is not observable; bumping this lets Compose re-read the values below. */
+    var uiRevision by mutableIntStateOf(0)
+        private set
+
     val sortBy get() = sp.getString(SORT_BY, SORT_NAME)
     val filterUserApps get() = sp.getBoolean(FILTER_USER_APPS, true)
     val filterSystemApps get() = sp.getBoolean(FILTER_SYSTEM_APPS, false)
@@ -153,25 +160,24 @@ object HailData {
     val biometricLogin get() = sp.getBoolean(BIOMETRIC_LOGIN, false)
     val appTheme get() = sp.getString(APP_THEME, FOLLOW_SYSTEM)!!
     val iconPack get() = sp.getString(ICON_PACK, ACTION_NONE)!!
-    val grayscaleIcon get() = sp.getBoolean(GRAYSCALE_ICON, true)
     val compactIcon get() = sp.getBoolean(COMPACT_ICON, false)
     val synthesizeAdaptiveIcons get() = sp.getBoolean(SYNTHESIZE_ADAPTIVE_ICONS, false)
     var groupApps
         get() = sp.getBoolean(GROUP_APPS, true)
-        set(value) = sp.edit { putBoolean(GROUP_APPS, value) }
+        set(value) = sp.edit { putBoolean(GROUP_APPS, value) }.also { uiRevision++ }
     var homeLayout
         get() = sp.getString(HOME_LAYOUT, LAYOUT_GRID)!!
-        set(value) = sp.edit { putString(HOME_LAYOUT, value) }
+        set(value) = sp.edit { putString(HOME_LAYOUT, value) }.also { uiRevision++ }
     var appsLayout
         get() = sp.getString(APPS_LAYOUT, LAYOUT_LIST)!!
-        set(value) = sp.edit { putString(APPS_LAYOUT, value) }
+        set(value) = sp.edit { putString(APPS_LAYOUT, value) }.also { uiRevision++ }
     var gridColumns
         get() = if (sp.contains(GRID_COLUMNS)) sp.getInt(GRID_COLUMNS, 4).coerceIn(1, 5)
         else (if (compactIcon) 5 else 4).coerceIn(1, 5)
-        set(value) = sp.edit { putInt(GRID_COLUMNS, value.coerceIn(1, 5)) }
+        set(value) = sp.edit { putInt(GRID_COLUMNS, value.coerceIn(1, 5)) }.also { uiRevision++ }
     var groupMode
         get() = sp.getInt(GROUP_MODE, GROUP_USER_SYSTEM)
-        set(value) = sp.edit { putInt(GROUP_MODE, value) }
+        set(value) = sp.edit { putInt(GROUP_MODE, value) }.also { uiRevision++ }
     val homeFontSize get() = sp.getFloat(HOME_FONT_SIZE, 14f)
     val fuzzySearch get() = sp.getBoolean(FUZZY_SEARCH, false)
     val nineKeySearch get() = sp.getBoolean(NINE_KEY_SEARCH, false)
@@ -260,7 +266,13 @@ object HailData {
         })
     }
 
-    fun changeAppsSort(sort: String) = sp.edit { putString(SORT_BY, sort) }
+    fun changeAppsSort(sort: String) {
+        sp.edit { putString(SORT_BY, sort) }
+        uiRevision++
+    }
 
-    fun changeAppsFilter(filter: String, enabled: Boolean) = sp.edit { putBoolean(filter, enabled) }
+    fun changeAppsFilter(filter: String, enabled: Boolean) {
+        sp.edit { putBoolean(filter, enabled) }
+        uiRevision++
+    }
 }

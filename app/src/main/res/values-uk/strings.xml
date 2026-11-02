@@ -61,7 +61,6 @@
     <string name="filter_system_apps">Системні</string>
     <string name="filter_unfrozen_apps">Незаморожені</string>
     <string name="filter_user_apps">Користувальницькі</string>
-    <string name="grayscale_icon">Іконки у відтінках сірого</string>
     <string name="label_default">За замовчуванням</string>
     <string name="label_time">Час встановлення</string>
     <string name="label_version">Версія</string>

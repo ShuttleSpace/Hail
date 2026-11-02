@@ -74,7 +74,6 @@
     <string name="msg_unfreeze">یخ‌زدوده: %s</string>
     <string name="auto_freeze">یخ‌زدن خودکار</string>
     <string name="title_customize">شخصی سازی</string>
-    <string name="grayscale_icon">آیکون خاکستری</string>
     <string name="compact_icon">آیکون فشرده</string>
     <string name="action_biometric">ورود بیومتریک</string>
     <string name="action_pin">سنجاق</string>

@@ -148,7 +148,6 @@
     <string name="skip_while_charging">Pomiń podczad ładowania</string>
     <string name="skip_foreground_app">Pomiń aplikacje pierwszoplanowe</string>
     <string name="title_customize">Dostosuj</string>
-    <string name="grayscale_icon">Szare ikony</string>
     <string name="compact_icon">Kompaktowe ikony</string>
     <string name="action_biometric">Odblokowywanie biometryczne</string>
     <string name="msg_biometric">Zaloguj używając twoich danych biometrycznych</string>

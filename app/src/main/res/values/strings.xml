@@ -52,6 +52,10 @@
     <string name="working_mode_privapp">System App</string>
     <string name="working_mode_jailbreak">Jailbreak</string>
     <string name="mode_default">Idle</string>
+    <string name="mode_action_stop">Force Stop</string>
+    <string name="mode_action_disable">Disable</string>
+    <string name="mode_action_hide">Hide</string>
+    <string name="mode_action_suspend">Suspend</string>
     <string name="mode_owner_hide">Device Owner - Hide</string>
     <string name="mode_owner_suspend">Device Owner - Suspend</string>
     <string name="mode_su_stop">Root - Force Stop</string>
@@ -72,6 +76,7 @@
     <string name="action_invert">Invert selection</string>
     <string name="action_confirm">Confirm</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_back">Back</string>
     <string name="action_edit">Edit</string>
     <string name="filter_by">Filter</string>
     <string name="group_apps">Group apps</string>
@@ -130,7 +135,6 @@
     <string name="skip_while_charging">Skip while charging</string>
     <string name="skip_foreground_app">Skip foreground app</string>
     <string name="title_customize">Customize</string>
-    <string name="grayscale_icon">Grayscale icon</string>
     <string name="compact_icon">Compact icon</string>
     <string name="action_biometric">Biometric login</string>
     <string name="msg_biometric">Login using your biometric credential</string>
